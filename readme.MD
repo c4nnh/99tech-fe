@@ -4,10 +4,15 @@ This project contains solutions for 3 technical problems as part of the applicat
 
 ## Project Structure
 
-### Problem 1
+### Problem 1: Sum to N
 
 Contains the first solution with detailed implementation and documentation.
 **Folder:** `problem-1`
+
+### Problem 3: Messy component
+
+Contains the third solution with detailed implementation and documentation.
+**Folder:** `problem-3`
 
 ## Documentation
 
