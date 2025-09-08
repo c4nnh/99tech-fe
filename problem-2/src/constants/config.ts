@@ -23,4 +23,5 @@ export const UI_CONFIG = {
 export const VALIDATION_CONFIG = {
   MAX_AMOUNT: 1000000,
   MIN_AMOUNT: 0,
+  FAILURE_THRESHOLD: 20000, // Amounts above this will simulate API failure
 } as const;

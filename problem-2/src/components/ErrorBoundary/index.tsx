@@ -4,6 +4,7 @@ import {
   ErrorOutline as ErrorIcon,
   Refresh as RefreshIcon,
 } from "@mui/icons-material";
+import { errorBoundaryStyles } from "./styles";
 
 interface Props {
   children: ReactNode;
@@ -48,45 +49,35 @@ export class ErrorBoundary extends Component<Props, State> {
               justifyContent: "center",
             }}
           >
-            <Box
-              sx={{
-                textAlign: "center",
-                p: 4,
-                bgcolor: "background.paper",
-                borderRadius: 2,
-                boxShadow: 3,
-              }}
-            >
-              <ErrorIcon
-                sx={{
-                  fontSize: 64,
-                  color: "error.main",
-                  mb: 2,
-                }}
-              />
+            <Box sx={errorBoundaryStyles.container}>
+              <ErrorIcon sx={errorBoundaryStyles.errorIcon} />
 
-              <Typography variant="h5" component="h1" gutterBottom>
+              <Typography
+                variant="h5"
+                component="h1"
+                sx={errorBoundaryStyles.title}
+              >
                 Something went wrong
               </Typography>
 
-              <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
+              <Typography variant="body1" sx={errorBoundaryStyles.message}>
                 We encountered an unexpected error. Please try refreshing the
                 page or contact support if the problem persists.
               </Typography>
 
               {this.state.error && (
-                <Alert severity="error" sx={{ mb: 3, textAlign: "left" }}>
+                <Alert severity="error" sx={errorBoundaryStyles.details}>
                   <Typography
                     variant="body2"
                     component="pre"
-                    sx={{ fontSize: "0.8rem" }}
+                    sx={errorBoundaryStyles.detailsText}
                   >
                     {this.state.error.message}
                   </Typography>
                 </Alert>
               )}
 
-              <Box sx={{ display: "flex", gap: 2, justifyContent: "center" }}>
+              <Box sx={errorBoundaryStyles.buttonContainer}>
                 <Button
                   variant="contained"
                   startIcon={<RefreshIcon />}

@@ -13,11 +13,13 @@ import {
 } from "@mui/material";
 import { SwapVert as SwapVertIcon } from "@mui/icons-material";
 import moment from "moment";
-import type { SwapTransaction } from "../types";
-import { SwapHistory } from "./SwapHistory";
-import { TokenSelect } from "./TokenSelect";
-import { useSwapCurrency } from "../hooks/useSwapCurrency";
-import { UI_CONFIG } from "../constants/config";
+import type { SwapTransaction } from "../../types";
+import { SwapHistory } from "../SwapHistory";
+import { TokenSelect } from "../TokenSelect";
+import { Loading } from "../Loading";
+import { useSwapCurrency } from "../../hooks/useSwapCurrency";
+import { UI_CONFIG, VALIDATION_CONFIG } from "../../constants/config";
+import { currencySwapFormStyles } from "./styles";
 
 export function CurrencySwapForm() {
   const [swapping, setSwapping] = useState(false);
@@ -84,7 +86,14 @@ export function CurrencySwapForm() {
     try {
       // Simulate API call with loading delay and cancellation support
       await new Promise((resolve, reject) => {
-        const timeoutId = setTimeout(resolve, UI_CONFIG.SWAP_DELAY_MS);
+        const timeoutId = setTimeout(() => {
+          // Check if amount exceeds failure threshold
+          if (formData.fromAmount > VALIDATION_CONFIG.FAILURE_THRESHOLD) {
+            reject(new Error("API_FAILURE"));
+          } else {
+            resolve(undefined);
+          }
+        }, UI_CONFIG.SWAP_DELAY_MS);
 
         abortController.signal.addEventListener("abort", () => {
           clearTimeout(timeoutId);
@@ -123,6 +132,23 @@ export function CurrencySwapForm() {
 
         setSwapHistory((prev) => [cancelledTransaction, ...prev]);
         showSnackbar("Swap was cancelled", "error");
+      } else if (error instanceof Error && error.message === "API_FAILURE") {
+        const failedTransaction: SwapTransaction = {
+          id: `swap_${Date.now()}`,
+          fromToken: formData.fromToken,
+          toToken: formData.toToken,
+          fromAmount: formData.fromAmount,
+          toAmount: parseFloat(calculatedToAmount),
+          exchangeRate,
+          timestamp: moment().toISOString(),
+          status: "failed",
+        };
+
+        setSwapHistory((prev) => [failedTransaction, ...prev]);
+        showSnackbar(
+          `Swap failed: Amount ${formData.fromAmount.toLocaleString()} exceeds maximum limit of ${VALIDATION_CONFIG.FAILURE_THRESHOLD.toLocaleString()}`,
+          "error"
+        );
       } else {
         showSnackbar("Swap failed. Please try again.", "error");
       }
@@ -133,45 +159,14 @@ export function CurrencySwapForm() {
   }
 
   if (loading) {
-    return (
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          minHeight: "200px",
-        }}
-      >
-        <CircularProgress />
-        <Typography variant="body1" sx={{ ml: 2 }}>
-          Loading tokens...
-        </Typography>
-      </Box>
-    );
+    return <Loading message="Loading tokens..." />;
   }
 
   return (
-    <Box
-      sx={{
-        display: "flex",
-        gap: 4,
-        width: "100%",
-        maxWidth: 1000,
-        alignItems: "stretch",
-        flexDirection: { xs: "column", md: "row" },
-      }}
-    >
+    <Box sx={currencySwapFormStyles.mainContainer}>
       {/* Main Form */}
-      <Box sx={{ flex: 1, minWidth: 400 }}>
-        <Card
-          elevation={3}
-          sx={{
-            height: "100%",
-            maxHeight: 700,
-            display: "flex",
-            flexDirection: "column",
-          }}
-        >
+      <Box sx={currencySwapFormStyles.formContainer}>
+        <Card elevation={3} sx={currencySwapFormStyles.formCard}>
           <CardHeader
             title={
               <Typography variant="h4" component="h1" align="center">
@@ -201,23 +196,18 @@ export function CurrencySwapForm() {
                 onTokenChange={handleFromTokenChange}
                 onAmountChange={handleFromAmountChange}
                 disabled={swapping}
+                disabledTokens={formData.toToken ? [formData.toToken] : []}
               />
 
               {/* Swap Button */}
-              <Box display="flex" justifyContent="center" sx={{ my: 2 }}>
+              <Box sx={currencySwapFormStyles.swapButtonContainer}>
                 <IconButton
                   onClick={handleSwapTokens}
                   disabled={
                     !formData.fromToken || !formData.toToken || swapping
                   }
                   size="large"
-                  sx={{
-                    border: 1,
-                    borderColor: "divider",
-                    "&:hover": {
-                      backgroundColor: "action.hover",
-                    },
-                  }}
+                  sx={currencySwapFormStyles.swapButton}
                 >
                   <SwapVertIcon />
                 </IconButton>
@@ -232,6 +222,7 @@ export function CurrencySwapForm() {
                 onTokenChange={handleToTokenChange}
                 disabled={swapping}
                 readOnlyAmount={true}
+                disabledTokens={formData.fromToken ? [formData.fromToken] : []}
               />
 
               {/* Exchange Rate Display */}
@@ -243,7 +234,7 @@ export function CurrencySwapForm() {
               )}
 
               {/* Submit/Cancel Buttons */}
-              <Box sx={{ mt: 2, display: "flex", gap: 2 }}>
+              <Box sx={currencySwapFormStyles.submitButtonContainer}>
                 {swapping ? (
                   <>
                     <Button
@@ -260,7 +251,7 @@ export function CurrencySwapForm() {
                       color="error"
                       size="large"
                       onClick={handleCancelSwap}
-                      sx={{ minWidth: 120 }}
+                      sx={currencySwapFormStyles.cancelButton}
                     >
                       Cancel
                     </Button>
@@ -299,7 +290,7 @@ export function CurrencySwapForm() {
         <Alert
           onClose={handleCloseSnackbar}
           severity={snackbar.severity}
-          sx={{ width: "100%" }}
+          sx={currencySwapFormStyles.snackbarAlert}
         >
           {snackbar.message}
         </Alert>

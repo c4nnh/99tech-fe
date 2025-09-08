@@ -12,7 +12,8 @@ import {
   Error as ErrorIcon,
 } from "@mui/icons-material";
 import moment from "moment";
-import type { SwapTransaction } from "../types";
+import type { SwapTransaction } from "../../types";
+import { swapHistoryStyles } from "./styles";
 
 interface SwapHistoryProps {
   swapHistory: SwapTransaction[];
@@ -42,25 +43,8 @@ export function SwapHistory({ swapHistory }: SwapHistoryProps) {
     }
   }
   return (
-    <Box
-      sx={{
-        flex: 1,
-        minWidth: 350,
-        display: {
-          xs: swapHistory.length > 0 ? "block" : "none",
-          md: "block",
-        },
-      }}
-    >
-      <Card
-        elevation={2}
-        sx={{
-          height: "100%",
-          maxHeight: 700,
-          display: "flex",
-          flexDirection: "column",
-        }}
-      >
+    <Box sx={swapHistoryStyles.container}>
+      <Card elevation={2} sx={swapHistoryStyles.card}>
         <CardHeader
           title={
             <Typography variant="h6">
@@ -68,27 +52,19 @@ export function SwapHistory({ swapHistory }: SwapHistoryProps) {
             </Typography>
           }
         />
-        <CardContent sx={{ flex: 1, overflowY: "auto" }}>
+        <CardContent sx={swapHistoryStyles.cardContent}>
           {swapHistory.length > 0 ? (
-            <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+            <Box sx={swapHistoryStyles.historyList}>
               {swapHistory.map((swap, index) => (
                 <Box key={swap.id}>
-                  {index > 0 && <Divider sx={{ mb: 2 }} />}
+                  {index > 0 && <Divider sx={swapHistoryStyles.divider} />}
 
                   {/* Swap Header with Time and Status */}
-                  <Box
-                    sx={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                      mb: 1,
-                    }}
-                  >
-                    <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                  <Box sx={swapHistoryStyles.swapHeader}>
+                    <Box sx={swapHistoryStyles.swapHeaderLeft}>
                       <Typography
                         variant="body2"
-                        color="primary"
-                        fontWeight="bold"
+                        sx={swapHistoryStyles.swapNumber}
                       >
                         Swap #{swapHistory.length - index}
                       </Typography>
@@ -96,21 +72,18 @@ export function SwapHistory({ swapHistory }: SwapHistoryProps) {
                         const statusInfo = getStatusInfo(swap.status);
                         const StatusIcon = statusInfo.icon;
                         return (
-                          <Box
-                            sx={{
-                              display: "flex",
-                              alignItems: "center",
-                              gap: 0.5,
-                            }}
-                          >
+                          <Box sx={swapHistoryStyles.statusContainer}>
                             <StatusIcon
-                              sx={{ fontSize: 16, color: statusInfo.color }}
+                              sx={{
+                                ...swapHistoryStyles.statusIcon,
+                                color: statusInfo.color,
+                              }}
                             />
                             <Typography
                               variant="caption"
                               sx={{
+                                ...swapHistoryStyles.statusText,
                                 color: statusInfo.color,
-                                fontWeight: "medium",
                               }}
                             >
                               {statusInfo.text}
@@ -119,32 +92,41 @@ export function SwapHistory({ swapHistory }: SwapHistoryProps) {
                         );
                       })()}
                     </Box>
-                    <Typography variant="body2" color="text.secondary">
+                    <Typography
+                      variant="body2"
+                      sx={swapHistoryStyles.timestamp}
+                    >
                       {moment(swap.timestamp).format("MMM DD, HH:mm:ss")}
                     </Typography>
                   </Box>
 
                   {/* Swap Details */}
-                  <Box
-                    sx={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      mb: 1,
-                    }}
-                  >
-                    <Box>
-                      <Typography variant="body2" color="text.secondary">
+                  <Box sx={swapHistoryStyles.swapDetails}>
+                    <Box sx={swapHistoryStyles.tokenInfo}>
+                      <Typography
+                        variant="body2"
+                        sx={swapHistoryStyles.tokenLabel}
+                      >
                         From:
                       </Typography>
-                      <Typography variant="body1">
+                      <Typography
+                        variant="body1"
+                        sx={swapHistoryStyles.tokenAmount}
+                      >
                         {swap.fromAmount} {swap.fromToken}
                       </Typography>
                     </Box>
-                    <Box>
-                      <Typography variant="body2" color="text.secondary">
+                    <Box sx={swapHistoryStyles.tokenInfo}>
+                      <Typography
+                        variant="body2"
+                        sx={swapHistoryStyles.tokenLabel}
+                      >
                         To:
                       </Typography>
-                      <Typography variant="body1">
+                      <Typography
+                        variant="body1"
+                        sx={swapHistoryStyles.tokenAmount}
+                      >
                         {swap.toAmount.toFixed(6)} {swap.toToken}
                       </Typography>
                     </Box>
@@ -152,7 +134,10 @@ export function SwapHistory({ swapHistory }: SwapHistoryProps) {
 
                   {/* Exchange Rate */}
                   <Box>
-                    <Typography variant="body2" color="text.secondary">
+                    <Typography
+                      variant="body2"
+                      sx={swapHistoryStyles.exchangeRate}
+                    >
                       Rate: 1 {swap.fromToken} = {swap.exchangeRate.toFixed(6)}{" "}
                       {swap.toToken}
                     </Typography>
@@ -161,15 +146,7 @@ export function SwapHistory({ swapHistory }: SwapHistoryProps) {
               ))}
             </Box>
           ) : (
-            <Box
-              sx={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                py: 4,
-                color: "text.secondary",
-              }}
-            >
+            <Box sx={swapHistoryStyles.emptyState}>
               <Typography variant="body2" align="center">
                 Your completed swaps will appear here
               </Typography>

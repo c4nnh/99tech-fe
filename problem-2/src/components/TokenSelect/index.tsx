@@ -1,6 +1,7 @@
 import React from "react";
 import { Box, Typography, TextField, MenuItem, Avatar } from "@mui/material";
-import type { TokenWithIcon } from "../types";
+import type { TokenWithIcon } from "../../types";
+import { tokenSelectStyles } from "./styles";
 
 interface TokenSelectProps {
   label: string;
@@ -12,6 +13,7 @@ interface TokenSelectProps {
   disabled?: boolean;
   readOnlyAmount?: boolean;
   amountPlaceholder?: string;
+  disabledTokens?: string[];
 }
 
 export function TokenSelect({
@@ -24,6 +26,7 @@ export function TokenSelect({
   disabled = false,
   readOnlyAmount = false,
   amountPlaceholder = "0.00",
+  disabledTokens = [],
 }: TokenSelectProps) {
   function handleTokenChange(event: React.ChangeEvent<HTMLInputElement>) {
     onTokenChange(event.target.value);
@@ -34,11 +37,11 @@ export function TokenSelect({
   }
 
   return (
-    <Box sx={{ mb: 2 }}>
+    <Box sx={tokenSelectStyles.container}>
       <Typography variant="subtitle1" gutterBottom>
         {label}
       </Typography>
-      <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+      <Box sx={tokenSelectStyles.inputContainer}>
         <TextField
           select
           fullWidth
@@ -48,16 +51,28 @@ export function TokenSelect({
           variant="outlined"
           disabled={disabled}
         >
-          {tokens.map((token) => (
-            <MenuItem key={token.currency} value={token.currency}>
-              <Box display="flex" alignItems="center" gap={1}>
-                <Avatar src={token.icon} sx={{ width: 24, height: 24 }}>
-                  {token.currency[0]}
-                </Avatar>
-                {token.currency} - {token.name}
-              </Box>
-            </MenuItem>
-          ))}
+          {tokens.map((token) => {
+            const isDisabled = disabledTokens.includes(token.currency);
+            return (
+              <MenuItem
+                key={token.currency}
+                value={token.currency}
+                disabled={isDisabled}
+                sx={
+                  isDisabled
+                    ? tokenSelectStyles.disabledMenuItem
+                    : tokenSelectStyles.menuItem
+                }
+              >
+                <Box sx={tokenSelectStyles.tokenInfo}>
+                  <Avatar src={token.icon} sx={tokenSelectStyles.tokenAvatar}>
+                    {token.currency[0]}
+                  </Avatar>
+                  {token.currency} - {token.name}
+                </Box>
+              </MenuItem>
+            );
+          })}
         </TextField>
         <TextField
           fullWidth
@@ -77,12 +92,8 @@ export function TokenSelect({
           }}
           sx={
             readOnlyAmount
-              ? {
-                  "& .MuiInputBase-input": {
-                    backgroundColor: "action.hover",
-                  },
-                }
-              : undefined
+              ? tokenSelectStyles.readOnlyAmountInput
+              : tokenSelectStyles.amountInput
           }
         />
       </Box>

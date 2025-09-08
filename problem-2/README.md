@@ -4,6 +4,12 @@
 
 A modern, responsive currency swap application built with React, TypeScript, and Vite. This application allows users to swap cryptocurrencies with real-time exchange rates fetched from the Switcheo Network API.
 
+## Preview
+
+![Currency Swap Application](preview.png)
+
+_The currency swap interface showing token selection, real-time exchange rates, and swap history with various transaction statuses._
+
 ## Features
 
 - **Real-time Exchange Rates**: Fetches live token prices from Switcheo Network
@@ -160,6 +166,51 @@ npm install
 - **Token Prices**: `https://interview.switcheo.com/prices.json`
 - **Token Icons**: `https://raw.githubusercontent.com/Switcheo/token-icons/main/tokens/{SYMBOL}.svg`
 
+## Mock API Behavior & Testing
+
+The application includes simulated API behavior to demonstrate different swap scenarios:
+
+### Success Cases
+
+- **Normal swaps**: Amounts between 0.01 and 20,000 will complete successfully
+- **Real-time feedback**: 2-second delay simulates actual API calls
+- **History tracking**: All successful swaps are recorded with timestamps
+
+### Failure Cases
+
+- **High amount threshold**: Amounts above **20,000** will simulate API failure
+- **Error handling**: Failed swaps are recorded in history with "failed" status
+- **User feedback**: Clear error messages explain why the swap failed
+
+### Cancellation
+
+- **User control**: Users can cancel swaps during the 2-second processing delay
+- **Cancel button**: Appears during swap processing
+- **History tracking**: Cancelled swaps are recorded with "cancelled" status
+
+### Testing Different Scenarios
+
+1. **Test Success**: Enter amount ≤ 20,000 (e.g., 1000 BTC → ETH)
+2. **Test Failure**: Enter amount > 20,000 (e.g., 25000 BTC → ETH)
+3. **Test Cancellation**: Start a swap and click "Cancel" before completion
+4. **Test Prevention**: Try selecting the same token for both From and To fields
+
+### Configuration
+
+All thresholds and delays are configurable in `src/constants/config.ts`:
+
+```typescript
+export const VALIDATION_CONFIG = {
+  MAX_AMOUNT: 1000000, // Maximum allowed amount
+  MIN_AMOUNT: 0, // Minimum allowed amount
+  FAILURE_THRESHOLD: 20000, // Amounts above this simulate API failure
+} as const;
+
+export const UI_CONFIG = {
+  SWAP_DELAY_MS: 2000, // Simulated API call delay
+} as const;
+```
+
 ## Future Enhancements
 
 - Add dark mode support
@@ -179,5 +230,3 @@ npm install
 - Edge (latest)
 
 ---
-
-Built with ❤️ using modern web technologies
