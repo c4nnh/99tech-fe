@@ -9,9 +9,14 @@ This project contains solutions for 3 technical problems as part of the applicat
 Contains the first solution with detailed implementation and documentation.
 **Folder:** `problem-1`
 
-### Problem 3: Messy component
+### Problem 2: Currency Swap Application
 
-Contains the third solution with detailed implementation and documentation.
+A modern React application for swapping cryptocurrencies with real-time exchange rates.
+**Folder:** `problem-2`
+
+### Problem 3: Messy Component Refactoring
+
+Contains the third solution with code optimization and refactoring examples.
 **Folder:** `problem-3`
 
 ## Documentation
