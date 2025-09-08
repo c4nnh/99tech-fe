@@ -87,54 +87,8 @@ Using native React state management with HTML5 validation:
 
 ## Environment Requirements
 
-Before running the application, ensure you have the following installed:
-
 - **Node.js**: Version 20.19.0 or higher (or 22.12.0+)
-  - Check your version: `node --version`
-  - Download from: [https://nodejs.org/](https://nodejs.org/)
-- **npm**: Version 10.0.0 or higher (comes with Node.js)
-  - Check your version: `npm --version`
-
-> **Important**: This project uses Vite 7.x which requires Node.js 20.19+ or 22.12+. If you're using an older version of Node.js, you'll encounter errors when running the development server.
-
-**Note**: This project includes:
-
-- `.npmrc` file with `engine-strict=true` to enforce Node.js version requirements
-- `engines` field in `package.json` specifying minimum Node.js and npm versions
-- Simplified dependencies using Material-UI instead of multiple UI libraries
-
-### Node.js Version Issues
-
-If you see errors like:
-
-```
-You are using Node.js 18.18.2. Vite requires Node.js version 20.19+ or 22.12+
-```
-
-or
-
-```
-TypeError: crypto.hash is not a function
-```
-
-Please upgrade your Node.js version to 20.19.0 or higher.
-
-**Upgrade Options:**
-
-- **Direct Install**: Download Node.js 20+ from [nodejs.org](https://nodejs.org/)
-- **Using NVM** (recommended for managing multiple versions):
-  - Install NVM: [github.com/nvm-sh/nvm](https://github.com/nvm-sh/nvm)
-  - Then run: `nvm install 20` and `nvm use 20`
-
-**After upgrading Node.js, clean reinstall dependencies:**
-
-```bash
-# Remove existing node_modules and package-lock.json
-rm -rf node_modules package-lock.json
-
-# Reinstall dependencies with correct Node.js version
-npm install
-```
+- **npm**: Version 10.0.0 or higher
 
 ## Running the Application
 
